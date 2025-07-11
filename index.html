@@ -5,20 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inventario de Productos Tecnológicos</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-p6VCxE7XJfNKMZ1P3+1Gy9vLwHQV1guz0hckrZ0F1dZmgQhpxMTzD6Z5bwWYlkSsnnVv1U0m4b3+K6dbuXU9BA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     body {
-      background-color: aqua;
+      background: aqua;
     }
-    .card {
-      margin-bottom: 1rem;
+    .table-container {
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+    }
+    .btn-action {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    .btn-action:hover {
+      color: #fff !important;
     }
   </style>
 </head>
 <body>
-  <div class="container py-4">
-    <h1 class="mb-4 text-center">Inventario para Productos Tecnológicos</h1>
+  <div class="container py-5">
+    <h1 class="text-center mb-4">Inventario de Productos Tecnológicos</h1>
 
-    <div class="card">
+    <div class="card mb-4 shadow-sm">
       <div class="card-body">
         <form id="form-producto" class="row g-3">
           <div class="col-md-4">
@@ -34,38 +50,40 @@
             <input type="number" class="form-control" placeholder="Precio ($)" id="precio" min="0" step="0.01" required>
           </div>
           <div class="col-md-1 d-grid">
-            <button type="submit" class="btn btn-primary">Agregar</button>
+            <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
           </div>
         </form>
       </div>
     </div>
 
-    <div class="table-responsive">
-      <table class="table table-bordered table-striped mt-4">
-        <thead class="table-dark">
-          <tr>
-            <th>Nombre</th>
-            <th>Categoría</th>
-            <th>Cantidad</th>
-            <th>Precio ($)</th>
-            <th>Total ($)</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="tabla-productos">
-     
-        </tbody>
-      </table>
+    <div class="table-container">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th class="text-center">Cantidad</th>
+              <th class="text-end">Precio ($)</th>
+              <th class="text-end">Total ($)</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-productos">
+            <!-- Filas generadas dinámicamente -->
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-
+  <!-- Modal Editar -->
   <div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalEditarLabel">Editar Producto</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="modalEditarLabel"><i class="fas fa-edit me-2"></i>Editar Producto</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
         <div class="modal-body">
           <form id="form-editar">
@@ -86,13 +104,14 @@
               <label for="editar-precio" class="form-label">Precio ($)</label>
               <input type="number" class="form-control" id="editar-precio" min="0" step="0.01" required>
             </div>
-            <button type="submit" class="btn btn-success">Guardar Cambios</button>
+            <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
           </form>
         </div>
       </div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     const form = document.getElementById('form-producto');
     const tabla = document.getElementById('tabla-productos');
@@ -110,12 +129,12 @@
         fila.innerHTML = `
           <td>${producto.nombre}</td>
           <td>${producto.categoria}</td>
-          <td>${producto.cantidad}</td>
-          <td>$${producto.precio.toFixed(2)}</td>
-          <td>$${(producto.cantidad * producto.precio).toFixed(2)}</td>
-          <td>
-            <button class="btn btn-warning btn-sm me-1" onclick="abrirModalEditar(${index})">Editar</button>
-            <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${index})">Eliminar</button>
+          <td class="text-center">${producto.cantidad}</td>
+          <td class="text-end">$${producto.precio.toFixed(2)}</td>
+          <td class="text-end">$${(producto.cantidad * producto.precio).toFixed(2)}</td>
+          <td class="text-center">
+            <button class="btn btn-warning btn-sm btn-action me-1" onclick="abrirModalEditar(${index})" title="Editar"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-danger btn-sm btn-action" onclick="eliminarProducto(${index})" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
           </td>
         `;
         tabla.appendChild(fila);
@@ -124,14 +143,11 @@
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
-
       const nombre = document.getElementById('nombre').value;
       const categoria = document.getElementById('categoria').value;
       const cantidad = parseInt(document.getElementById('cantidad').value);
       const precio = parseFloat(document.getElementById('precio').value);
-
-      const nuevoProducto = { nombre, categoria, cantidad, precio };
-      productos.push(nuevoProducto);
+      productos.push({ nombre, categoria, cantidad, precio });
       guardarProductos();
       renderProductos();
       form.reset();
@@ -169,7 +185,5 @@
 
     renderProductos();
   </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
